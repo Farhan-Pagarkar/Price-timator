@@ -139,19 +139,16 @@ def engineer_features_single(input_df, zip_stats, city_stats):
     df = df.reindex(columns=model_columns, fill_value=0)
     return df
 
-# -------------------------------
-# Streamlit Interface
-# -------------------------------
 st.set_page_config(page_title="The Price-Timator", layout="centered")
-st.title("Sahi Sahi Bhav Lagao Bhaya")
+st.title("Your Friendly Neighborhood Price-Timator")
 
-# --- Initialize session state ---
+
 if 'step' not in st.session_state:
     st.session_state.step = 1
 if 'address' not in st.session_state:
     st.session_state.address = ""
 
-# --- Step 1: Address input ---
+# the user's address input 
 if st.session_state.step == 1:
     st.subheader("Enter Property Address")
     address = st.text_input("Full Property Address)", value=st.session_state.address)
@@ -161,9 +158,9 @@ if st.session_state.step == 1:
         else:
             st.session_state.address = address
             st.session_state.step = 2
-            st.rerun() # Use rerun to smoothly transition to the next step
+            st.rerun() 
 
-# --- Step 2: Property Details ---
+#details tab
 if st.session_state.step == 2:
     st.subheader("Step 2: Enter Property Details")
     with st.form("property_details_form"):
@@ -180,7 +177,7 @@ if st.session_state.step == 2:
             YearBuilt_str = st.text_input("Year Built", value="2000")
             City = st.text_input("City", value="Miami")
             ZIP = st.text_input("ZIP Code", value="33101")
-            PropertySubType = st.selectbox("Property SubType", ["SingleFamilyResidence","Condominium","Townhouse","MultiFamily","Duplex","Residential"])
+            PropertySubType = st.selectbox("Property SubType", ["Single Family Residence","Condominium","Townhouse","MultiFamily","Duplex","Residential"])
 
         Description = st.text_area("Property Description", height=100, help="Mention pool, remodel, kitchen upgrades etc.")
         submitted = st.form_submit_button("Get Estimate")
