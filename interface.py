@@ -7,9 +7,9 @@ import random
 import re
 
 st.set_page_config(page_title="The Price-Timator", layout="centered")
-st.title("Know what your property is worth with The Price-Timator!")
+st.title("Know what your property is worth in Miami MLS with The Price-Timator!")
 
-# ---------------- CSS Styling ----------------
+# css style
 st.markdown(
     """
     <style>
@@ -40,7 +40,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ---------------- Load Artifacts ----------------
+#loading model
 @st.cache_data
 def load_artifacts():
     high_model = xgb.XGBRegressor()
@@ -52,7 +52,7 @@ def load_artifacts():
 
 high_model, zip_stats, city_stats, model_columns = load_artifacts()
 
-# ---------------- Feature Functions ----------------
+#feature engineering functions
 def extract_zip(address: str):
     """Extract 5-digit ZIP from address string"""
     match = re.search(r"\b\d{5}\b$", address)
@@ -108,9 +108,11 @@ def engineer_features_single(input_df, zip_stats, city_stats):
     return df
 
 
+#streamlit form
+
+
 address = st.text_input("Full Property Address", value="")
 
-# ---------------- Streamlit Form ----------------
 st.subheader("Enter Property Details")
 with st.form("property_form"):
     
@@ -125,21 +127,22 @@ with st.form("property_form"):
         PropertyLot_Square_footage_str = st.text_input("Lot Size (sqft)", value="5000")
         GarageSpaces_str = st.text_input("Garage Spaces", value="1")
         YearBuilt_str = st.text_input("Year Built", value="2000")
-        City = st.text_input("City", value="Miami")
+        City = st.selectbox("City", ["Miami", "Miami Beach", "Hialeah", "Coral Gables", "North Miami", 
+                                     "Aventura", "Sunny Isles Beach", "Doral", "Kendall", "Pinecrest", "Cutler Bay", "Homestead", "Hollywood"])
 
         # Auto extract ZIP
         extracted_zip = extract_zip(address)
         ZIP = st.text_input("ZIP Code", value=extracted_zip if extracted_zip else "")
 
         PropertySubType = st.selectbox(
-            "Property SubType",
-            ["SingleFamilyResidence","Condominium","Townhouse","MultiFamily","Duplex","Residential"]
+            "Property Sub Type",
+            ["Single Family Residence","Condominium","Townhouse","MultiFamily","Duplex","Residential"]
         )
 
     Description = st.text_area("Property Description", height=100, help="Mention pool, remodel, kitchen upgrades etc.")
     submitted = st.form_submit_button("Get Estimate")
 
-# ---------------- Prediction ----------------
+#predictions
 if submitted:
     try:
         Beds = int(Beds_str)
@@ -174,7 +177,7 @@ if submitted:
         predicted = np.expm1(high_model.predict(processed_df))[0]
 
         high_start = predicted
-        high_end = predicted + random.uniform(95000, 100000)
+        high_end = predicted + random.uniform(50000, 60000)
 
         price_range_str = f"${high_start:,.0f} - ${high_end:,.0f}"
         st.markdown(f"""
